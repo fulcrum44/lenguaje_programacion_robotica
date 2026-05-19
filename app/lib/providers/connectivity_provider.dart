@@ -39,6 +39,7 @@ class ConnectivityProvider extends ChangeNotifier {
   }
 
   Timer? _pollingTimer;
+  bool _paused = false;
 
   int _robotFailCount = 0;
   static const int _maxFailsBeforeDisconnect = 3;
@@ -51,6 +52,8 @@ class ConnectivityProvider extends ChangeNotifier {
   }
 
   Future<void> _checkConnection() async {
+    if (_paused) return;
+
     final result = await _connectivity.checkConnectivity();
 
     // Primero comprobamos si los datos móviles están activados o desactivados
@@ -165,6 +168,17 @@ class ConnectivityProvider extends ChangeNotifier {
   void _stopPolling() {
     _pollingTimer?.cancel();
     _pollingTimer = null;
+  }
+
+  void pauseChecks() {
+    _paused = true;
+    _stopPolling();
+  }
+
+  void resumeChecks() {
+    _paused = false;
+    _checkConnection();
+    _startPolling();
   }
 
   bool _couldBeRobotWifi() {

@@ -44,6 +44,8 @@ class _SendScreenState extends State<SendScreen> {
       _log = "";
     });
 
+    context.read<ConnectivityProvider>().pauseChecks();
+
     final url = Uri.parse("http://$_espIp:$_espPort/update");
     _appendLog("→ Conectando a ESP8266 en $_espIp ...");
     _appendLog(
@@ -84,6 +86,10 @@ class _SendScreenState extends State<SendScreen> {
       _appendLog("✗ Error: $e");
     } finally {
       setState(() => _uploading = false);
+
+      if (mounted) {
+        context.read<ConnectivityProvider>().resumeChecks();
+      }
     }
   }
 
