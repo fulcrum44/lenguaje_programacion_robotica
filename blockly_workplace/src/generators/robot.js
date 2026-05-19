@@ -93,7 +93,10 @@ arduinoGenerator.forBlock['detectar_obstaculo'] = function (block) {
 arduinoGenerator.forBlock['cambiar_velocidad'] = function (block) {
   const vel = block.getFieldValue('VELOCIDAD');
   inyectarBase();
-  return `velocidad = ${vel};\n`;
+  
+  // 100% = rápido = 50µs, 0% = lento = 2000µs
+  const microsegundos = Math.round(2000 - (vel / 100) * (2000 - 50));
+  return `velocidad = ${microsegundos};\n`;
 };
 
 arduinoGenerator.forBlock['esperar_segundos'] = function (block) {
